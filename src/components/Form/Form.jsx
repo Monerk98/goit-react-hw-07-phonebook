@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { addContact } from "../../redux/contacts/contacts-operations";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {getContactsFromState} from '../../redux/contacts/contacts-selectors'
 import s from "./Form.module.css";
 
 export default function Form() {
   const dispatch = useDispatch();
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
+
+  const contacts = useSelector(getContactsFromState)
 
   const handleChange = (e) => {
     const { name, value } = e.currentTarget;
@@ -26,6 +29,11 @@ export default function Form() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    let duplicate = contacts.find((contact) => contact.name === name);
+    if(duplicate){
+        alert('Такой контакт уже существует')
+        setName("")
+        return }
     dispatch(addContact({ name, number }));
     setNumber("");
     setName("");
